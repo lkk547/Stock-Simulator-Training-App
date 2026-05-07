@@ -51,6 +51,10 @@ jobs:
             mv "$ANDROID_SDK_ROOT/cmdline-tools/cmdline-tools" "$ANDROID_SDK_ROOT/cmdline-tools/latest"
           fi
 
+          # Buildozer / python-for-android sometimes still checks the legacy path
+          mkdir -p "$ANDROID_SDK_ROOT/tools/bin"
+          ln -sfn "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" "$ANDROID_SDK_ROOT/tools/bin/sdkmanager"
+
           yes | "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --licenses || true
 
           "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" \
@@ -67,11 +71,9 @@ jobs:
           echo "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin" >> $GITHUB_PATH
           echo "$ANDROID_SDK_ROOT/build-tools/34.0.0" >> $GITHUB_PATH
 
-          # 关键：让 Buildozer 默认查找的 SDK 目录指向我们安装的 SDK（解决 aidl 找不到）
           mkdir -p "$HOME/.buildozer/android/platform"
           ln -sfn "$ANDROID_SDK_ROOT" "$HOME/.buildozer/android/platform/android-sdk"
 
-          # 校验 aidl 存在，避免再次踩坑
           test -x "$ANDROID_SDK_ROOT/build-tools/34.0.0/aidl"
           "$ANDROID_SDK_ROOT/build-tools/34.0.0/aidl" --version || true
 
