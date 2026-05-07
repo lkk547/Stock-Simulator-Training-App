@@ -23,6 +23,24 @@ jobs:
       run: |
         pip install cython buildozer
 
+    - name: Install Android SDK build-tools (fix aidl missing)
+      run: |
+        # 设置 SDK 路径
+        SDK_PATH="$HOME/.buildozer/android/platform/android-sdk"
+        mkdir -p $SDK_PATH
+
+        # 下载命令行工具
+        wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -O /tmp/cmdline-tools.zip
+        mkdir -p $SDK_PATH/cmdline-tools
+        unzip -q /tmp/cmdline-tools.zip -d $SDK_PATH/cmdline-tools
+        mv $SDK_PATH/cmdline-tools/cmdline-tools $SDK_PATH/cmdline-tools/latest
+
+        # 接受许可证（非交互）
+        yes | $SDK_PATH/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null 2>&1
+
+        # 安装 build-tools 版本 33.0.0（其中包含 aidl）
+        $SDK_PATH/cmdline-tools/latest/bin/sdkmanager "build-tools;33.0.0"
+
     - name: Build APK with Buildozer
       run: |
         buildozer android debug
