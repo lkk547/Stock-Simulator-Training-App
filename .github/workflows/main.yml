@@ -1,0 +1,28 @@
+name: Build Kivy APK
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+    - name: Install buildozer
+      run: |
+        pip install cython buildozer
+    - name: Build APK
+      uses: ArtemSBulgakov/buildozer-action@v1
+      id: buildozer
+      with:
+        workdir: .
+        buildozer_version: stable
+    - name: Upload APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: stock_simulator_apk
+        path: ${{ steps.buildozer.outputs.filename }}
