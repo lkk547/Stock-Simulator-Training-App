@@ -1,0 +1,20 @@
+[app]
+title = 炒股模拟器
+package.name = stock_simulator
+package.domain = org.example
+source.dir = .
+source.include_exts = py,png,jpg,kv,atlas,txt,ttf
+version = 0.1
+requirements = python3,kivy,baostock,pandas,threading
+orientation = portrait
+fullscreen = 1
+osx.python_version = 3
+osx.kivy_version = 2.1.0
+android.permissions = INTERNET
+android.api = 30
+android.minapi = 21
+android.sdk = 30
+android.ndk = 23b
+android.archs = arm64-v8a, armeabi-v7a
+p4a.branch = stable
+icon.filename = %(source.dir)s/icon.png
