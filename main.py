@@ -1,7 +1,7 @@
 """
 手机炒股模拟器 - Kivy 完整版
 功能：真实A股数据（baostock）、随机非ST股票池、K线图、MACD、模拟买卖、交易记录
-运行前请安装：pip install kivy baostock pandas
+运行前请安装：pip install kivy
 """
 
 import kivy
