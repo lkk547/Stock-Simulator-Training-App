@@ -57,7 +57,8 @@ def generate_mock_kline_data(code_original, start_date, end_date):
     if start_dt > end_dt:
         start_dt, end_dt = end_dt, start_dt
 
-    rng = random.Random(f"{code_original}:{start_date}:{end_date}")  # 固定种子，保证同一输入下模拟数据可复现
+    # 字符串种子让同一股票+日期范围下的数据稳定可复现，同时不同输入仍有差异
+    rng = random.Random(f"{code_original}:{start_date}:{end_date}")
     base_price = rng.uniform(8.0, 80.0)
     day = start_dt
     data_list = []
@@ -71,8 +72,8 @@ def generate_mock_kline_data(code_original, start_date, end_date):
             data_list.append({
                 'date': day,
                 'open': round(open_p, 2),
-                'high': round(max(high_p, open_p, close_p), 2),
-                'low': round(max(0.5, min(low_p, open_p, close_p)), 2),
+                'high': round(max(0.5, high_p), 2),
+                'low': round(max(0.5, low_p), 2),
                 'close': round(close_p, 2),
                 'volume': int(rng.uniform(100000, 7000000)),
                 'turnover': round(rng.uniform(0.2, 15.0), 2),
