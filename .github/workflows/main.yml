@@ -59,6 +59,10 @@ jobs:
             "build-tools;34.0.0" \
             "ndk;25.2.9519653"
 
+          # 兼容 Buildozer 对旧版 sdkmanager 路径的探测
+          mkdir -p "$ANDROID_SDK_ROOT/tools/bin"
+          ln -sfn "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" "$ANDROID_SDK_ROOT/tools/bin/sdkmanager"
+
           echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
           echo "ANDROID_HOME=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
           echo "ANDROIDSDK=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
