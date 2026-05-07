@@ -1,37 +1,37 @@
-"""
-手机炒股模拟器 - Kivy 完整版
-功能：真实A股数据（baostock）、随机非ST股票池、K线图、MACD、模拟买卖、交易记录
+'""'
 运行前请安装：pip install kivy baostock pandas
+手机炒股模拟器 - Kivy 完整版
+'""'
 """
 
-import kivy
-kivy.require('2.1.0')
+导入 kivy kivy
+kivy.require('2.1.0')require('2.1.0')
 
-from kivy.app import App
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.gridlayout import GridLayout
-from kivy.uix.scrollview import ScrollView
-from kivy.uix.label import Label
-from kivy.uix.button import Button
-from kivy.uix.textinput import TextInput
-from kivy.uix.popup import Popup
-from kivy.uix.widget import Widget
-from kivy.clock import Clock
-from kivy.graphics import Color, Rectangle, Line
-from kivy.core.text import Label as CoreLabel
-from kivy.core.window import Window
-from kivy.utils import platform
-from datetime import datetime, timedelta
-import random
-import threading
+从 kivy.app 导入 App kivy.app import App
+从 kivy.uix.boxlayout 导入 BoxLayout kivy.uix.boxlayout import BoxLayout
+从 kivy.uix.gridlayout 导入 GridLayout kivy.uix.gridlayout import GridLayout
+从 kivy.uix.scrollview 导入 ScrollView kivy.uix.scrollview import ScrollView
+从 kivy.uix.label 导入 Label kivy.uix.label import Label
+从 kivy.uix.button 导入 Button kivy.uix.button import Button
+从 kivy.uix.textinput 导入 TextInput kivy.uix.textinput import TextInput
+从 kivy.uix.popup 导入Popup kivy.uix.popup import Popup
+从 kivy.uix.widget 导入 Widget kivy.uix.widget import Widget
+从 kivy.clock 导入 Clock kivy.clock import Clock
+从 kivy.graphics 导入 Color, Rectangle, Line kivy.graphics import Color, Rectangle, Line
+从 kivy.core.text import Label 作为 CoreLabel kivy.core.text import Label as CoreLabel
+从 kivy.core.window 导入 Window kivy.core.window import Window
+从 kivy.utils 导入 platform kivy.utils import platform
+从 datetime 导入 datetime, timedelta datetime import datetime, timedelta
+导入随机数模块 random
+导入线程模块 threading
 
 # ----------------------------- 导入 baostock -----------------------------
-try:
-    import baostock as bs
-    BAOSTOCK_AVAILABLE = True
-except ImportError:
-    BAOSTOCK_AVAILABLE = False
-    print("警告: 未安装 baostock，请执行 pip install baostock")
+尝试：:
+    导入 baostock 库 as bsimport baostock as bs
+    BAOSTOCK可用 = 真True
+except ImportError: ImportError:
+    BAOSTOCK可用 = 否False
+    打印("警告: 未安装 baostock，请执行 pip install baostock")print("警告: 未安装 baostock，请执行 pip install baostock")
 
 # 窗口设置
 if platform in ('android', 'ios'):
