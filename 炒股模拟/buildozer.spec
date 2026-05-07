@@ -1,20 +1,20 @@
-[app]
-title = 炒股模拟器
-package.name = stock_simulator
+[应用程序]
+标题 = 炒股模拟器
+包名 = 股票模拟器
 package.domain = org.example
-source.dir = .
+源目录 = .
 source.include_exts = py,png,jpg,kv,atlas,txt,ttf
-version = 0.1
-requirements = python3,kivy,baostock,pandas,threading
-orientation = portrait
-fullscreen = 1
+版本 = 0.1
+要求 = python3, kivy, baostock, pandas, threading
+方向 = 竖屏
+全屏 = 1
 osx.python_version = 3
 osx.kivy_version = 2.1.0
-android.permissions = INTERNET
+android.permissions = 互联网
 android.api = 30
 android.minapi = 21
 android.sdk = 30
 android.ndk = 23b
 android.archs = arm64-v8a, armeabi-v7a
-p4a.branch = stable
+p4a分支 = 稳定
 icon.filename = %(source.dir)s/icon.png
