@@ -1,4 +1,4 @@
-[app]
+[应用程序][app]
 title = 炒股模拟器
 package.name = stock_simulator
 package.domain = org.example
@@ -13,8 +13,8 @@ osx.kivy_version = 2.1.0
 android.permissions = INTERNET
 android.api = 30
 android.minapi = 21
-android.sdk = 30
-android.ndk = 23b
+# android.sdk = 30          # 已废弃，可删除或注释
+# android.ndk = 23b         # 注释掉，我们将使用 NDK 25
 android.archs = arm64-v8a, armeabi-v7a
-p4a.branch = stable
+p4a.branch = master          # 关键！使用新分支
 icon.filename = %(source.dir)s/icon.png
