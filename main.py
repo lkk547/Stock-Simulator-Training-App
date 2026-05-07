@@ -57,7 +57,7 @@ def generate_mock_kline_data(code_original, start_date, end_date):
     if start_dt > end_dt:
         start_dt, end_dt = end_dt, start_dt
 
-    rng = random.Random(f"{code_original}:{start_date}:{end_date}")
+    rng = random.Random(f"{code_original}:{start_date}:{end_date}")  # 固定种子，保证同一输入下模拟数据可复现
     base_price = rng.uniform(8.0, 80.0)
     day = start_dt
     data_list = []
@@ -143,7 +143,7 @@ def fetch_stock_data_from_baostock(code_original, start_date, end_date):
         if not data_list:
             return generate_mock_kline_data(code_original, start_date, end_date), None
         return data_list, None
-    except Exception as e:
+    except Exception:
         if 'bs' in locals():
             bs.logout()
         return generate_mock_kline_data(code_original, start_date, end_date), None
@@ -151,8 +151,9 @@ def fetch_stock_data_from_baostock(code_original, start_date, end_date):
 
 def get_non_st_stock_pool():
     """从baostock获取所有非ST的A股股票列表（代码 + 名称）"""
+    fallback_pool = FALLBACK_STOCK_POOL.copy()
     if not BAOSTOCK_AVAILABLE:
-        return FALLBACK_STOCK_POOL.copy()
+        return fallback_pool
 
     try:
         lg = bs.login()
@@ -192,11 +193,11 @@ def get_non_st_stock_pool():
 
             stocks.append({'code': pure_code, 'name': name})
         bs.logout()
-        return stocks if stocks else FALLBACK_STOCK_POOL.copy()
+        return stocks if stocks else fallback_pool
     except:
         if 'bs' in locals():
             bs.logout()
-        return FALLBACK_STOCK_POOL.copy()
+        return fallback_pool
 
 
 def get_random_non_st_stock():
