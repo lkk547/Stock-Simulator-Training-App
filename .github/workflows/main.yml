@@ -36,21 +36,27 @@ jobs:
           python -m pip install --upgrade pip
           pip install cython buildozer
 
-      - name: Fix buildozer.spec (set p4a.branch to master for AAB support)
+      # 修改点1：增加清理 Buildozer 缓存（避免旧 NDK 干扰）
+      - name: Clean Buildozer cache
+        run: rm -rf ~/.buildozer
+
+      - name: Fix buildozer.spec (set p4a.branch to master and remove old ndk)
         run: |
-          # 如果 buildozer.spec 不存在，则创建默认配置
           if [ ! -f buildozer.spec ]; then
             buildozer init
           fi
-          # 强制设置 p4a.branch = master（支持 AAB）
+          # 强制设置 p4a.branch = master
           if grep -q "^p4a.branch" buildozer.spec; then
             sed -i 's/^p4a.branch.*/p4a.branch = master/' buildozer.spec
           else
             echo "p4a.branch = master" >> buildozer.spec
           fi
-          # 确保 requirements 包含必要依赖（可手动调整）
+          # 删除或注释掉旧的 android.ndk 行（避免版本冲突）
+          if grep -q "^android.ndk" buildozer.spec; then
+            sed -i 's/^android.ndk/#android.ndk/' buildozer.spec
+          fi
           echo "buildozer.spec 已更新："
-          grep "p4a.branch" buildozer.spec || true
+          grep -E "p4a.branch|android.ndk" buildozer.spec || true
 
       - name: Install/Configure Android SDK (sdkmanager + components)
         env:
@@ -92,11 +98,20 @@ jobs:
           test -x "$ANDROID_SDK_ROOT/build-tools/34.0.0/aidl"
           "$ANDROID_SDK_ROOT/build-tools/34.0.0/aidl" --version || true
 
+      # 修改点2：在 Build APK 前显式设置 NDK 路径，覆盖系统默认的旧 NDK
+      - name: Set NDK path for Buildozer
+        run: |
+          NDK_PATH="$ANDROID_SDK_ROOT/ndk/25.2.9519653"
+          echo "ANDROID_NDK_HOME=$NDK_PATH" >> $GITHUB_ENV
+          echo "ANDROID_NDK_ROOT=$NDK_PATH" >> $GITHUB_ENV
+
       - name: Build APK with Buildozer
         env:
           ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
           ANDROID_HOME: ${{ github.workspace }}/android-sdk
           ANDROIDSDK: ${{ github.workspace }}/android-sdk
+          ANDROID_NDK_HOME: ${{ github.workspace }}/android-sdk/ndk/25.2.9519653
+          ANDROID_NDK_ROOT: ${{ github.workspace }}/android-sdk/ndk/25.2.9519653
         run: |
           set -euxo pipefail
           buildozer -v android debug
