@@ -94,11 +94,16 @@ def generate_mock_kline_data(code_original, start_date, end_date):
     return data_list
 
 
+def fallback_data_with_notice(code_original, start_date, end_date, reason):
+    print(f"提示: 使用模拟数据 ({reason})")
+    return generate_mock_kline_data(code_original, start_date, end_date), None
+
+
 # ========================== 真实数据获取 ==========================
 def fetch_stock_data_from_baostock(code_original, start_date, end_date):
     """从baostock获取真实股票日K线数据（不复权）"""
     if not BAOSTOCK_AVAILABLE:
-        return generate_mock_kline_data(code_original, start_date, end_date), None
+        return fallback_data_with_notice(code_original, start_date, end_date, "baostock 不可用")
 
     # 格式化代码
     if code_original.startswith('6'):
@@ -112,7 +117,7 @@ def fetch_stock_data_from_baostock(code_original, start_date, end_date):
         lg = bs.login()
         if lg.error_code != '0':
             bs.logout()
-            return generate_mock_kline_data(code_original, start_date, end_date), None
+            return fallback_data_with_notice(code_original, start_date, end_date, f"登录失败: {lg.error_msg}")
 
         rs = bs.query_history_k_data_plus(
             code,
@@ -122,7 +127,7 @@ def fetch_stock_data_from_baostock(code_original, start_date, end_date):
         )
         if rs.error_code != '0':
             bs.logout()
-            return generate_mock_kline_data(code_original, start_date, end_date), None
+            return fallback_data_with_notice(code_original, start_date, end_date, f"查询失败: {rs.error_msg}")
 
         data_list = []
         while rs.next():
@@ -142,12 +147,12 @@ def fetch_stock_data_from_baostock(code_original, start_date, end_date):
         bs.logout()
 
         if not data_list:
-            return generate_mock_kline_data(code_original, start_date, end_date), None
+            return fallback_data_with_notice(code_original, start_date, end_date, "无真实交易数据")
         return data_list, None
-    except Exception:
+    except Exception as exc:
         if 'bs' in locals():
             bs.logout()
-        return generate_mock_kline_data(code_original, start_date, end_date), None
+        return fallback_data_with_notice(code_original, start_date, end_date, f"网络异常: {exc}")
 
 
 def get_non_st_stock_pool():
