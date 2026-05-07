@@ -8,21 +8,27 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-    - name: Setup Python
+
+    - name: Set up Python
       uses: actions/setup-python@v5
       with:
         python-version: '3.10'
-    - name: Install buildozer
+
+    - name: Install system dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y git zip unzip openjdk-17-jdk autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
+
+    - name: Install Cython and Buildozer
       run: |
         pip install cython buildozer
-    - name: Build APK
-      uses: ArtemSBulgakov/buildozer-action@v1
-      id: buildozer
-      with:
-        workdir: .
-        buildozer_version: stable
+
+    - name: Build APK with Buildozer
+      run: |
+        buildozer android debug
+
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: stock_simulator_apk
-        path: ${{ steps.buildozer.outputs.filename }}
+        path: bin/*.apk
